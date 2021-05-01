@@ -21,7 +21,7 @@ protected:
     virtual void finish();
 
 public:
-    virtual bool check(long);
+    virtual bool check(const char *, long);
 };
 
 #endif /* MATCH_H_ */

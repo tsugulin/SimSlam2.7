@@ -22,7 +22,6 @@ protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
     virtual void finish();
-    virtual void startActivity(long);
     virtual void displayArray();
 
 public:

@@ -17,28 +17,19 @@ void Array::initialize()
 
 void Array::handleMessage(cMessage *msg)
 {
-    qlen.set(simTime(), length);    // 待ち行列長さの加重平均値の計算
-    length++;                       // 要素数を増やす
-    msg->setTimestamp(simTime());   // リードタイム開始時間をセット
-    ary.addAt(msg->getKind(), msg); // メッセージを配列に保管
-    displayArray();                 // 配列の状況を表示
-    startActivity(msg->getKind());
-}
-
-// 処理待ちがあればアクティビティを開始する
-void Array::startActivity(long idx)
-{
-    Enter_Method("startActivity");
-    if (length > 0) {       // 在庫が在れば
-        if (next->check(idx)) {
-            qlen.set(simTime(), length);                            // 待ち行列長さの加重平均値の計算
-            cMessage *msg = check_and_cast<cMessage *>(ary[idx]);   // メッセージ取り出し
-            ary.remove(idx);                                        // 配列をアンリンク
-            displayArray();                                         //　配列の状況を表示
-            length--;                                               // 要素数を減らす
-            send(msg, "out");                                       // 次工程に送信
-            stats.collect(simTime() - msg->getTimestamp());         // キュー滞留時間を保管
-        }
+    long idx = msg->getKind();      // 患者やカルテの番号をセット
+    if (next->check(qName, idx)) {
+        // マッチング先のカルテまたは患者がある場合
+        send(msg, "out");   // 次工程に送信
+        stats.collect(0);
+    }
+    else {
+        // マッチング先のペアがない場合
+        qlen.set(simTime(), length);    // 待ち行列長さの加重平均値の計算
+        length++;                       // 要素数を増やす
+        msg->setTimestamp(simTime());   // リードタイム開始時間をセット
+        ary.addAt(idx, msg);            // メッセージを配列に保管
+        displayArray();                 // 配列の状況を表示
     }
 }
 

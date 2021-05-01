@@ -7,8 +7,10 @@ void Unbatch::handleMessage(cMessage *msg)
         // メッセージがオブジェクトを含んでいる場合
         cObject *obj = msg->getObject("msgs");  // メッセージの待ち行列を取り出し
         cQueue *msgs = check_and_cast<cQueue *>(obj);
-        while (!msgs->isEmpty())
+        while (!msgs->isEmpty()) {
             send(check_and_cast<cMessage *>(msgs->pop()), "out");    // キューに溜まっているメッセージを次工程に送出
+            stats.collect(0);   // 送信個数を記録
+        }
     }
     delete msg;
 }
@@ -16,5 +18,5 @@ void Unbatch::handleMessage(cMessage *msg)
 //　処理件数を表示
 void Unbatch::finish()
 {
-    EV << "Batch jobs Count: " << stats.getCount() << endl;
+    EV << "Unbatch jobs Count: " << stats.getCount() << endl;
 }

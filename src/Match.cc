@@ -21,10 +21,15 @@ void Match::handleMessage(cMessage *msg)
 }
 
 // ‚à‚¤•Ð•û‚Ìƒm[ƒh‚Éˆê’v‚·‚é‘Ò‚¿s—ñ‚ª‚ ‚ê‚ÎŽŸ‚É‘—‚é
-bool Match::check(long idx)
+bool Match::check(const char *name, long idx)
 {
     Enter_Method("check");
-    return (before1->check(idx) && before2->check(idx)) ? true: false;
+    if (strcmp(name, "Queue4") == 0 && before2->check(idx))
+        return  true;
+    else if (strcmp(name, "Queue5") == 0 && before1->check(idx))
+        return true;
+    else
+        return false;
 }
 
 void Match::finish()
